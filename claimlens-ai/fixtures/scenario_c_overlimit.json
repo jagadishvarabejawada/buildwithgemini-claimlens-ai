@@ -1,0 +1,12 @@
+{
+  "claim_id": "CLM-DEMO-OVERLIMIT-003",
+  "employee": "Ananya Iyer",
+  "merchant": "ITC Grand Chola Chennai",
+  "date": "2026-10-12",
+  "category": "business_travel",
+  "currency": "INR",
+  "claimed_amount": "8400.00",
+  "receipt_amount": "8400.00",
+  "reference": "INV-MAA-9923",
+  "notes": "Regional Executive Review - Peak season room rate exceeded policy cap"
+}

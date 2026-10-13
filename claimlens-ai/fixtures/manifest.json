@@ -1,0 +1,66 @@
+{
+  "scenario_a_valid": {
+    "meta": {
+      "claim_id": "CLM-DEMO-VALID-001",
+      "employee": "Priya Sharma",
+      "merchant": "Taj Palace Bengaluru",
+      "date": "2026-10-10",
+      "category": "business_travel",
+      "currency": "INR",
+      "claimed_amount": "6900.00",
+      "receipt_amount": "6900.00",
+      "reference": "INV-BLR-8841",
+      "notes": "Annual Client Planning Conference - Standard Hotel Stay"
+    },
+    "pdf_file": "fixtures/scenario_a_valid.pdf",
+    "png_file": "fixtures/scenario_a_valid.png"
+  },
+  "scenario_b_mismatch": {
+    "meta": {
+      "claim_id": "CLM-DEMO-MISMATCH-002",
+      "employee": "Rahul Verma",
+      "merchant": "Oberoi Mumbai",
+      "date": "2026-10-11",
+      "category": "business_travel",
+      "currency": "INR",
+      "claimed_amount": "7000.00",
+      "receipt_amount": "6900.00",
+      "reference": "INV-BOM-5412",
+      "notes": "Partner Advisory Summit - Tip/incidentals claimed without separate receipt"
+    },
+    "pdf_file": "fixtures/scenario_b_mismatch.pdf",
+    "png_file": "fixtures/scenario_b_mismatch.png"
+  },
+  "scenario_c_overlimit": {
+    "meta": {
+      "claim_id": "CLM-DEMO-OVERLIMIT-003",
+      "employee": "Ananya Iyer",
+      "merchant": "ITC Grand Chola Chennai",
+      "date": "2026-10-12",
+      "category": "business_travel",
+      "currency": "INR",
+      "claimed_amount": "8400.00",
+      "receipt_amount": "8400.00",
+      "reference": "INV-MAA-9923",
+      "notes": "Regional Executive Review - Peak season room rate exceeded policy cap"
+    },
+    "pdf_file": "fixtures/scenario_c_overlimit.pdf",
+    "png_file": "fixtures/scenario_c_overlimit.png"
+  },
+  "scenario_d_combined": {
+    "meta": {
+      "claim_id": "CLM-DEMO-COMBINED-004",
+      "employee": "Vikram Patel",
+      "merchant": "Grand Hyatt Delhi",
+      "date": "2026-10-13",
+      "category": "business_travel",
+      "currency": "INR",
+      "claimed_amount": "8400.00",
+      "receipt_amount": "6900.00",
+      "reference": "INV-DEL-1049",
+      "notes": "Workshop Benchmark Demo - Claimed 8400.00 against verified receipt 6900.00"
+    },
+    "pdf_file": "fixtures/scenario_d_combined.pdf",
+    "png_file": "fixtures/scenario_d_combined.png"
+  }
+}

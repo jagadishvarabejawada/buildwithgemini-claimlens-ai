@@ -1,0 +1,12 @@
+{
+  "claim_id": "CLM-DEMO-COMBINED-004",
+  "employee": "Vikram Patel",
+  "merchant": "Grand Hyatt Delhi",
+  "date": "2026-10-13",
+  "category": "business_travel",
+  "currency": "INR",
+  "claimed_amount": "8400.00",
+  "receipt_amount": "6900.00",
+  "reference": "INV-DEL-1049",
+  "notes": "Workshop Benchmark Demo - Claimed 8400.00 against verified receipt 6900.00"
+}

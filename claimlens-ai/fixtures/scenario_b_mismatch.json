@@ -1,0 +1,12 @@
+{
+  "claim_id": "CLM-DEMO-MISMATCH-002",
+  "employee": "Rahul Verma",
+  "merchant": "Oberoi Mumbai",
+  "date": "2026-10-11",
+  "category": "business_travel",
+  "currency": "INR",
+  "claimed_amount": "7000.00",
+  "receipt_amount": "6900.00",
+  "reference": "INV-BOM-5412",
+  "notes": "Partner Advisory Summit - Tip/incidentals claimed without separate receipt"
+}

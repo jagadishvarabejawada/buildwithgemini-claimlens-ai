@@ -1,0 +1,12 @@
+{
+  "claim_id": "CLM-DEMO-VALID-001",
+  "employee": "Priya Sharma",
+  "merchant": "Taj Palace Bengaluru",
+  "date": "2026-10-10",
+  "category": "business_travel",
+  "currency": "INR",
+  "claimed_amount": "6900.00",
+  "receipt_amount": "6900.00",
+  "reference": "INV-BLR-8841",
+  "notes": "Annual Client Planning Conference - Standard Hotel Stay"
+}

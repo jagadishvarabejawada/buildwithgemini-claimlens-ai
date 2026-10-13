@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClaimLens AI</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+  <style>
+    :root {
+      --primary: #0f172a;
+      --secondary: #1e293b;
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+      --accent-light: #eef2ff;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --success: #15803d;
+      --success-bg: #dcfce7;
+      --warning: #b45309;
+      --warning-bg: #fef3c7;
+      --danger: #b91c1c;
+      --danger-bg: #fee2e2;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border-bottom: 2px solid var(--accent);
+    }
+    .brand-title { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.5px; }
+    .brand-tagline { font-size: 0.85rem; color: #94a3b8; font-style: italic; margin-left: 0.5rem; }
+    .demo-pill {
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .layout-container {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      overflow: hidden;
+    }
+    .panel {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 1.25rem;
+      gap: 1.25rem;
+    }
+    .panel.border-left { border-left: 1px solid var(--border); background: #fafbfc; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--secondary);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    /* Synthetic Preloads */
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+    }
+    .scenario-btn {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .scenario-btn:hover {
+      background: #e2e8f0;
+      border-color: var(--accent);
+    }
+    .scenario-btn strong { display: block; color: var(--secondary); margin-bottom: 2px; }
+    /* Pipeline Tracker */
+    .pipeline-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .pipeline-step {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .step-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #cbd5e1;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.65rem;
+    }
+    .step-dot.active { background: var(--accent); }
+    .step-dot.completed { background: var(--success); }
+    /* Form */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 0.25rem; }
+    .form-group.full { grid-column: span 2; }
+    label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+    input, select, textarea {
+      padding: 0.5rem 0.65rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+    }
+    .file-dropzone {
+      border: 2px dashed #cbd5e1;
+      border-radius: 6px;
+      padding: 0.85rem;
+      text-align: center;
+      cursor: pointer;
+      background: #f8fafc;
+      transition: border-color 0.15s;
+    }
+    .file-dropzone:hover { border-color: var(--accent); background: var(--accent-light); }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.65rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      width: 100%;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    /* Audit Result Cards */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .stat-box {
+      background: #f1f5f9;
+      border-radius: 6px;
+      padding: 0.5rem 0.65rem;
+      text-align: center;
+    }
+    .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+    .stat-val { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+    .stat-val.mismatch { color: var(--danger); }
+    .stat-val.excess { color: var(--warning); }
+    /* Findings Table */
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 0.5rem; }
+    th, td { border: 1px solid var(--border); padding: 0.45rem 0.6rem; text-align: left; }
+    th { background: #f8fafc; font-weight: 600; color: var(--text-muted); }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-high { background: var(--danger-bg); color: var(--danger); }
+    .badge-medium { background: var(--warning-bg); color: var(--warning); }
+    .badge-low { background: var(--success-bg); color: var(--success); }
+    /* Human Review Box */
+    .review-box {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 0.85rem;
+    }
+    .review-actions { display: flex; gap: 0.5rem; margin-top: 0.65rem; }
+    .btn-action {
+      flex: 1;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-approve { background: var(--success); color: #fff; }
+    .btn-reject { background: var(--danger); color: #fff; }
+    .btn-clarify { background: var(--warning); color: #fff; }
+    /* Chat & A2UI Dialogue Layout */
+    #chat-log {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      padding: 0.5rem 0.25rem 0.75rem 0.25rem;
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 transparent;
+    }
+    #chat-log::-webkit-scrollbar {
+      width: 5px;
+    }
+    #chat-log::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .chat-msg {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      max-width: 90%;
+      animation: fadeInMsg 0.2s ease-out;
+    }
+    @keyframes fadeInMsg {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .chat-msg.user {
+      align-self: flex-end;
+      align-items: flex-end;
+    }
+    .chat-msg.agent {
+      align-self: flex-start;
+      align-items: flex-start;
+    }
+    .chat-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      padding: 0 2px;
+    }
+    .chat-avatar {
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    .chat-avatar.agent {
+      background: var(--accent);
+    }
+    .chat-avatar.user {
+      background: var(--secondary);
+    }
+    .chat-avatar .material-symbols-outlined {
+      font-size: 13px;
+    }
+    .chat-sender-name {
+      font-weight: 600;
+      color: var(--text);
+    }
+    .chat-role-badge {
+      font-size: 0.65rem;
+      background: var(--accent-light);
+      color: var(--accent);
+      padding: 1px 5px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+    .chat-time {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-left: 2px;
+    }
+    .chat-bubble {
+      padding: 0.7rem 0.95rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      position: relative;
+    }
+    .chat-msg.agent .chat-bubble {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-top-left-radius: 3px;
+    }
+    .chat-msg.user .chat-bubble {
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      color: #ffffff;
+      border: none;
+      border-top-right-radius: 3px;
+      box-shadow: 0 2px 5px rgba(79, 70, 229, 0.2);
+    }
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0.6rem 0.85rem;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      border-top-left-radius: 3px;
+      width: fit-content;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: typingBounce 1.4s infinite ease-in-out both;
+    }
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes typingBounce {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
+      40% { transform: scale(1.1); opacity: 1; }
+    }
+    .chat-input-bar {
+      display: flex;
+      gap: 0.5rem;
+      border-top: 1px solid var(--border);
+      padding-top: 0.75rem;
+    }
+    .chat-input-bar input { flex: 1; }
+    .chat-input-bar button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.15s ease;
+    }
+    .chat-input-bar button:hover {
+      background: var(--accent-hover);
+    }
+    /* Clickable Example Prompts */
+    .example-prompts-row {
+      display: flex;
+      gap: 0.45rem;
+      padding: 0.45rem 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .example-prompts-row::-webkit-scrollbar {
+      display: none;
+    }
+    .example-prompt-chip {
+      background: #f1f5f9;
+      color: var(--secondary);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.35rem 0.7rem;
+      font-size: 0.74rem;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      flex-shrink: 0;
+    }
+    .example-prompt-chip:hover {
+      background: var(--accent-light);
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+    /* A2UI card styles */
+    .a2card { border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem; background: #fff; margin-top: 0.35rem; width: 100%; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+    .a2col { display: flex; flex-direction: column; gap: 0.35rem; }
+    .a2row { display: flex; flex-direction: row; gap: 0.5rem; align-items: center; }
+    .a2text { font-size: 0.85rem; }
+    .a2text.a2-h1 { font-size: 1.15rem; font-weight: 700; color: var(--primary); }
+    .a2text.a2-h2 { font-size: 1.05rem; font-weight: 700; color: var(--secondary); }
+    .a2text.a2-h3 { font-size: 0.95rem; font-weight: 600; }
+    .a2text.a2-caption { font-size: 0.75rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+        <span class="material-symbols-outlined" style="font-size: 20px; color: #fff;">fact_check</span>
+      </div>
+      <div style="display: flex; align-items: baseline; gap: 0.5rem;">
+        <span class="brand-title">ClaimLens AI</span>
+        <span class="brand-tagline">“Every claim, checked with evidence.”</span>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <span class="demo-pill">ClaimLens AI</span>
+    </div>
+  </header>
+
+  <div class="layout-container">
+    <!-- Left: Audit Dashboard, Upload & Review -->
+    <div class="panel">
+      <!-- Scenarios Card -->
+      <div class="card">
+        <div class="card-title">
+          <span class="material-symbols-outlined">dataset</span>
+          Select Synthetic Test Scenario
+        </div>
+        <div class="scenario-grid">
+          <button class="scenario-btn" onclick="loadScenario('scenario_a_valid')">
+            <strong>Scenario A: Valid Claim</strong>
+            Claimed 6,900 / Receipt 6,900 (Within limit)
+          </button>
+          <button class="scenario-btn" onclick="loadScenario('scenario_b_mismatch')">
+            <strong>Scenario B: Amount Mismatch</strong>
+            Claimed 7,000 / Receipt 6,900 (100 INR excess)
+          </button>
+          <button class="scenario-btn" onclick="loadScenario('scenario_c_overlimit')">
+            <strong>Scenario C: Over-Limit Claim</strong>
+            Claimed 8,400 / Receipt 8,400 (900 INR excess)
+          </button>
+          <button class="scenario-btn" onclick="loadScenario('scenario_d_combined')">
+            <strong>Scenario D: Workshop Demo Benchmark</strong>
+            Claimed 8,400 / Receipt 6,900 (Combined check)
+          </button>
+        </div>
+      </div>
+
+      <!-- Pipeline Status -->
+      <div class="card" style="padding: 0.65rem 1rem;">
+        <div class="pipeline-bar">
+          <div class="pipeline-step"><div class="step-dot completed">1</div> Upload</div>
+          <span>&rarr;</span>
+          <div class="pipeline-step"><div class="step-dot completed">2</div> Extract</div>
+          <span>&rarr;</span>
+          <div class="pipeline-step"><div class="step-dot completed">3</div> Validate</div>
+          <span>&rarr;</span>
+          <div class="pipeline-step"><div class="step-dot completed">4</div> Audit</div>
+          <span>&rarr;</span>
+          <div class="pipeline-step"><div class="step-dot completed">5</div> Persist</div>
+        </div>
+      </div>
+
+      <!-- Audit Form -->
+      <div class="card">
+        <div class="card-title">
+          <span class="material-symbols-outlined">receipt_long</span>
+          Expense Claim & Receipt Submission
+        </div>
+        <form id="audit-form" onsubmit="handleAuditSubmit(event)">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Receipt Document (PDF / PNG / JPEG &le; 10MB)</label>
+              <div class="file-dropzone" onclick="document.getElementById('receipt-file').click()">
+                <span class="material-symbols-outlined" style="font-size: 24px; color: var(--accent);">cloud_upload</span>
+                <div id="dropzone-label" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
+                  Click or drag synthetic receipt to upload
+                </div>
+                <input type="file" id="receipt-file" style="display: none;" accept=".pdf,.png,.jpg,.jpeg" onchange="handleFileSelect(event)">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Claim ID</label>
+              <input type="text" id="claim_id" required value="CLM-DEMO-COMBINED-004">
+            </div>
+            <div class="form-group">
+              <label>Employee Name</label>
+              <input type="text" id="employee" required value="Vikram Patel">
+            </div>
+            <div class="form-group">
+              <label>Merchant</label>
+              <input type="text" id="merchant" required value="Grand Hyatt Delhi">
+            </div>
+            <div class="form-group">
+              <label>Receipt Date</label>
+              <input type="date" id="receipt_date" required value="2026-10-13">
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <select id="category">
+                <option value="business_travel" selected>business_travel (Policy Limit: 7,500.00 INR)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Currency</label>
+              <input type="text" id="currency" readonly value="INR">
+            </div>
+            <div class="form-group">
+              <label>Claimed Amount (INR)</label>
+              <input type="number" step="0.01" id="claimed_amount" required value="8400.00">
+            </div>
+            <div class="form-group">
+              <label>Verified Receipt Amount (INR)</label>
+              <input type="number" step="0.01" id="receipt_amount" required value="6900.00">
+            </div>
+            <div class="form-group full">
+              <label>Claim / Business Purpose Notes</label>
+              <textarea id="notes" rows="2">Client strategy workshop and partner review.</textarea>
+            </div>
+          </div>
+          <div style="margin-top: 0.85rem;">
+            <button type="submit" class="btn-primary" id="btn-audit">
+              <span class="material-symbols-outlined">verified</span>
+              Run Deterministic Audit
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Active Audit Evidence & Findings -->
+      <div class="card" id="audit-results-card">
+        <div class="card-title">
+          <span class="material-symbols-outlined">analytics</span>
+          Audit Evidence & Findings
+        </div>
+        <div class="stat-row">
+          <div class="stat-box">
+            <div class="stat-label">Claimed vs. Receipt</div>
+            <div class="stat-val mismatch" id="res-mismatch">1,500.00 INR</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Claimed Limit Excess</div>
+            <div class="stat-val excess" id="res-claimed-excess">900.00 INR</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Receipt Limit Excess</div>
+            <div class="stat-val" id="res-receipt-excess">0.00 INR</div>
+          </div>
+        </div>
+
+        <div id="duplicate-warning" style="display: none; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 6px; padding: 0.5rem 0.75rem; margin-bottom: 0.5rem; font-size: 0.8rem; color: #9f1239;">
+          <strong>Potential Duplicate Detected:</strong> <span id="dup-note"></span>
+        </div>
+
+        <table id="findings-table">
+          <thead>
+            <tr>
+              <th>Rule Code</th>
+              <th>Severity</th>
+              <th>Policy Rule</th>
+              <th>Evidence / Discrepancy</th>
+              <th>Recommended Next Action</th>
+            </tr>
+          </thead>
+          <tbody id="findings-body">
+            <tr>
+              <td><strong>CLAIM_RECEIPT_MISMATCH</strong></td>
+              <td><span class="badge badge-high">HIGH</span></td>
+              <td>Claimed amount must match receipt amount</td>
+              <td>Claimed 8400.00 exceeds verified receipt 6900.00 by 1500.00 INR</td>
+              <td>Reconcile claim to verified receipt 6900.00 INR subject to human review</td>
+            </tr>
+            <tr>
+              <td><strong>CLAIM_LIMIT_EXCEEDED</strong></td>
+              <td><span class="badge badge-medium">MEDIUM</span></td>
+              <td>PP-DEMO-001 cap 7500.00 INR</td>
+              <td>Claimed amount 8400.00 exceeds policy limit 7500.00 by 900.00 INR</td>
+              <td>Cap reimbursement at eligible limit or obtain prior written approval</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Human Review Actions -->
+        <div class="review-box" style="margin-top: 1rem;">
+          <div style="font-weight: 700; color: #92400e; font-size: 0.85rem; margin-bottom: 4px;">
+            Explicit Human Review Decision
+          </div>
+          <div style="font-size: 0.75rem; color: #78350f; margin-bottom: 0.5rem;">
+            Per integrity policy, the AI assistant does not approve or reject claims. Current status:
+            <strong id="current-status-tag" style="text-transform: uppercase;">PENDING_HUMAN_REVIEW</strong>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="text" id="reviewer-id" placeholder="Reviewer ID (e.g. auditor_01)" value="auditor_ops_01" style="flex: 1; font-size: 0.8rem;">
+            <input type="text" id="reviewer-notes" placeholder="Human decision notes..." value="Adjusted to verified receipt amount 6900.00 INR" style="flex: 2; font-size: 0.8rem;">
+          </div>
+          <div class="review-actions">
+            <button class="btn-action btn-approve" onclick="submitReview('approved')">Approve (Human)</button>
+            <button class="btn-action btn-clarify" onclick="submitReview('clarification_requested')">Request Clarification</button>
+            <button class="btn-action btn-reject" onclick="submitReview('rejected')">Reject (Human)</button>
+          </div>
+        </div>
+
+        <!-- Download Buttons -->
+        <div style="display: flex; gap: 0.5rem; margin-top: 0.85rem;">
+          <button class="btn-action" style="background: #e2e8f0; color: var(--text);" onclick="downloadReport('json')">
+            <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">download</span> Download JSON Report
+          </button>
+          <button class="btn-action" style="background: #e2e8f0; color: var(--text);" onclick="downloadReport('html')">
+            <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">print</span> View / Print HTML Report
+          </button>
+        </div>
+      </div>
+
+      <!-- Recent Audits Table -->
+      <div class="card">
+        <div class="card-title">
+          <span class="material-symbols-outlined">history</span>
+          Recent Audited Records
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Claim ID</th>
+              <th>Employee</th>
+              <th>Merchant</th>
+              <th>Claimed</th>
+              <th>Receipt</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="history-body">
+            <!-- Populated via API -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right: Chat Assistant & A2UI Live Cards -->
+    <div class="panel border-left">
+      <div class="card" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+        <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="material-symbols-outlined">chat</span>
+            ClaimLens AI Assistant
+          </div>
+          <span id="chat-backend-badge" class="badge" style="background: #f1f5f9; color: #475569; font-size: 11px;">Checking...</span>
+        </div>
+        <div id="chat-log">
+          <div class="chat-msg agent">
+            <div class="chat-meta">
+              <div class="chat-avatar agent"><span class="material-symbols-outlined">fact_check</span></div>
+              <span class="chat-sender-name">ClaimLens AI</span>
+              <span class="chat-role-badge">Audit Assistant</span>
+            </div>
+            <div class="chat-bubble">
+              Welcome to <strong>ClaimLens AI</strong>. <em>“Every claim, checked with evidence.”</em><br><br>
+              I audit expense reimbursement claims against policy <strong>PP-DEMO-001</strong> with exact Decimal arithmetic. Use the dashboard on the left or select an example prompt below to get started.
+            </div>
+          </div>
+        </div>
+        <div class="example-prompts-row">
+          <button type="button" class="example-prompt-chip" onclick="selectExamplePrompt('What are the business travel limits and compliance rules under policy PP-DEMO-001?')">
+            <span class="material-symbols-outlined" style="font-size: 15px;">policy</span>
+            Policy PP-DEMO-001 Rules
+          </button>
+          <button type="button" class="example-prompt-chip" onclick="selectExamplePrompt('Audit an expense for Vikram Patel: he stayed at Grand Hyatt Delhi on 2026-10-13 for business travel, claimed 8,400 INR, and attached receipt REC-8804 for 6,900 INR.')">
+            <span class="material-symbols-outlined" style="font-size: 15px;">fact_check</span>
+            Audit Travel Expense
+          </button>
+          <button type="button" class="example-prompt-chip" onclick="selectExamplePrompt('Why does ClaimLens AI place audited claims in pending_human_review instead of auto-approving?')">
+            <span class="material-symbols-outlined" style="font-size: 15px;">verified_user</span>
+            Review Governance Rules
+          </button>
+        </div>
+        <form class="chat-input-bar" onsubmit="handleChatSubmit(event)">
+          <input type="text" id="input" placeholder="Ask about an expense audit, policy PP-DEMO-001..." autocomplete="off">
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let activeClaimId = "CLM-DEMO-COMBINED-004";
+    let cachedFixtures = {};
+
+    // Load available fixtures on startup
+    async function init() {
+      try {
+        const res = await fetch("/api/fixtures");
+        cachedFixtures = await res.json();
+      } catch (e) {
+        console.warn("Could not load fixtures:", e);
+      }
+      loadRecentAudits();
+    }
+
+    function loadScenario(key) {
+      const fix = cachedFixtures[key];
+      if (!fix || !fix.meta) return;
+      const m = fix.meta;
+      activeClaimId = m.claim_id;
+      document.getElementById("claim_id").value = m.claim_id;
+      document.getElementById("employee").value = m.employee;
+      document.getElementById("merchant").value = m.merchant;
+      document.getElementById("receipt_date").value = m.date;
+      document.getElementById("category").value = m.category;
+      document.getElementById("currency").value = m.currency;
+      document.getElementById("claimed_amount").value = m.claimed_amount;
+      document.getElementById("receipt_amount").value = m.receipt_amount;
+      document.getElementById("notes").value = m.notes || "";
+      document.getElementById("dropzone-label").textContent = "Selected: " + (fix.pdf_file || "synthetic receipt");
+      // Trigger audit run automatically
+      document.getElementById("audit-form").requestSubmit();
+    }
+
+    async function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      document.getElementById("dropzone-label").textContent = `Uploading: ${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+      const formData = new FormData();
+      formData.append("receipt", file);
+
+      try {
+        const res = await fetch("/api/upload", { method: "POST", body: formData });
+        const data = await res.json();
+        if (res.ok && data.extracted) {
+          const ext = data.extracted;
+          if (ext.merchant) document.getElementById("merchant").value = ext.merchant;
+          if (ext.receipt_date) document.getElementById("receipt_date").value = ext.receipt_date;
+          if (ext.receipt_amount) document.getElementById("receipt_amount").value = ext.receipt_amount;
+          if (ext.currency) document.getElementById("currency").value = ext.currency;
+          if (ext.employee) document.getElementById("employee").value = ext.employee;
+          document.getElementById("dropzone-label").textContent = `Extracted: ${file.name} (SHA-256 verified)`;
+        } else {
+          alert("File error: " + (data.detail || "Upload rejected"));
+        }
+      } catch (e) {
+        alert("Upload error: " + e.message);
+      }
+    }
+
+    async function handleAuditSubmit(event) {
+      event.preventDefault();
+      const payload = {
+        claim_id: document.getElementById("claim_id").value,
+        employee: document.getElementById("employee").value,
+        merchant: document.getElementById("merchant").value,
+        receipt_date: document.getElementById("receipt_date").value,
+        category: document.getElementById("category").value,
+        currency: document.getElementById("currency").value,
+        claimed_amount: document.getElementById("claimed_amount").value,
+        receipt_amount: document.getElementById("receipt_amount").value,
+        notes: document.getElementById("notes").value,
+      };
+
+      activeClaimId = payload.claim_id;
+      const res = await fetch("/api/audit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        renderAuditResult(data.audit_record);
+        loadRecentAudits();
+      } else {
+        alert("Audit failed: " + (data.message || "Error running audit"));
+      }
+    }
+
+    function renderAuditResult(record) {
+      const sum = record.audit_summary || {};
+      document.getElementById("res-mismatch").textContent = (sum.claim_receipt_difference_paise / 100).toFixed(2) + " " + record.currency;
+      document.getElementById("res-claimed-excess").textContent = (sum.claimed_amount_above_limit_paise / 100).toFixed(2) + " " + record.currency;
+      document.getElementById("res-receipt-excess").textContent = (sum.receipt_amount_above_limit_paise / 100).toFixed(2) + " " + record.currency;
+
+      document.getElementById("current-status-tag").textContent = record.review_status;
+
+      // Duplicate detection
+      const dup = record.duplicate_analysis;
+      const dupDiv = document.getElementById("duplicate-warning");
+      if (dup && dup.is_potential_duplicate) {
+        dupDiv.style.display = "block";
+        document.getElementById("dup-note").textContent = dup.note;
+      } else {
+        dupDiv.style.display = "none";
+      }
+
+      // Findings table
+      const tbody = document.getElementById("findings-body");
+      tbody.innerHTML = "";
+      const findings = record.findings || [];
+      if (findings.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--success);">&check; No policy violations or discrepancies found.</td></tr>`;
+      } else {
+        findings.forEach(f => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><strong>${f.code}</strong></td>
+            <td><span class="badge badge-${f.severity.toLowerCase()}">${f.severity}</span></td>
+            <td>${f.rule}</td>
+            <td>${f.explanation}</td>
+            <td>${f.recommended_next_action}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    async function submitReview(action) {
+      const revId = document.getElementById("reviewer-id").value;
+      const notes = document.getElementById("reviewer-notes").value;
+      const res = await fetch(`/api/audits/${activeClaimId}/review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: action, reviewer_id: revId, notes: notes }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        document.getElementById("current-status-tag").textContent = action;
+        loadRecentAudits();
+        alert(`Claim ${activeClaimId} marked as ${action.toUpperCase()} by reviewer.`);
+      } else {
+        alert("Review submission failed: " + data.detail);
+      }
+    }
+
+    function downloadReport(type) {
+      if (type === "json") {
+        window.open(`/api/audits/${activeClaimId}/report.json`, "_blank");
+      } else {
+        window.open(`/api/audits/${activeClaimId}/report.html`, "_blank");
+      }
+    }
+
+    async function loadRecentAudits() {
+      try {
+        const res = await fetch("/api/audits");
+        const data = await res.json();
+        const tbody = document.getElementById("history-body");
+        tbody.innerHTML = "";
+        (data.audits || []).forEach(a => {
+          const tr = document.createElement("tr");
+          const cAmt = (a.claimed_amount / 100).toFixed(2);
+          const rAmt = (a.receipt_amount / 100).toFixed(2);
+          tr.innerHTML = `
+            <td><strong>${a.claim_id}</strong></td>
+            <td>${a.employee}</td>
+            <td>${a.merchant}</td>
+            <td>${cAmt}</td>
+            <td>${rAmt}</td>
+            <td><span class="badge" style="background:#e0f2fe; color:#0369a1;">${a.review_status}</span></td>
+            <td><button class="scenario-btn" style="padding:2px 8px;" onclick="loadExistingAudit('${a.claim_id}')">View</button></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (e) {
+        console.warn("Could not load recent audits:", e);
+      }
+    }
+
+    async function loadExistingAudit(claimId) {
+      const res = await fetch(`/api/audits/${claimId}`);
+      if (res.ok) {
+        const record = await res.json();
+        activeClaimId = record.claim_id;
+        document.getElementById("claim_id").value = record.claim_id;
+        document.getElementById("employee").value = record.employee;
+        document.getElementById("merchant").value = record.merchant;
+        document.getElementById("receipt_date").value = record.receipt_date;
+        document.getElementById("category").value = record.category;
+        document.getElementById("currency").value = record.currency;
+        document.getElementById("claimed_amount").value = (record.claimed_amount / 100).toFixed(2);
+        document.getElementById("receipt_amount").value = (record.receipt_amount / 100).toFixed(2);
+        renderAuditResult(record);
+      }
+    }
+
+    // Check chat backend status
+    async function checkChatBackendStatus() {
+      const badge = document.getElementById("chat-backend-badge");
+      if (!badge) return;
+      try {
+        const res = await fetch("/api/chat/status");
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        if (data.mode === "deployed_a2a") {
+          badge.textContent = "A2A Deployed";
+          badge.style.background = "#dcfce7";
+          badge.style.color = "#166534";
+        } else {
+          badge.textContent = "Local ADK Runner";
+          badge.style.background = "#e0f2fe";
+          badge.style.color = "#0369a1";
+        }
+      } catch (e) {
+        badge.textContent = "Offline / Error";
+        badge.style.background = "#fee2e2";
+        badge.style.color = "#991b1b";
+      }
+    }
+
+    // Select & auto-submit example prompt
+    function selectExamplePrompt(promptText) {
+      const input = document.getElementById("input") || document.getElementById("chat-input");
+      if (input) {
+        input.value = promptText;
+        input.focus();
+        const fakeEvent = { preventDefault: () => {} };
+        handleChatSubmit(fakeEvent);
+      }
+    }
+
+    // Format agent message markdown cleanly and safely
+    function formatAgentText(rawText) {
+      if (!rawText) return "";
+      const div = document.createElement("div");
+      div.textContent = rawText;
+      let safe = div.innerHTML;
+      safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      safe = safe.replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+      safe = safe.replace(/`([^`]+)`/g, '<code style="background:#f1f5f9;padding:1px 4px;border-radius:4px;font-family:monospace;font-size:0.85em;color:var(--accent);">$1</code>');
+      safe = safe.replace(/^[\s]*[-•]\s+(.*)$/gm, '<div style="display:flex;gap:6px;margin:2px 0;"><span style="color:var(--accent);">•</span><span>$1</span></div>');
+      safe = safe.replace(/\n/g, '<br>');
+      return safe;
+    }
+
+    // Chat handler
+    async function handleChatSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById("input") || document.getElementById("chat-input");
+      const msg = input.value.trim();
+      if (!msg) return;
+      input.value = "";
+
+      const chatLog = document.getElementById("chat-log");
+      const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+      // User Message with Dialogue Layout
+      const uMsg = document.createElement("div");
+      uMsg.className = "chat-msg user";
+
+      const uMeta = document.createElement("div");
+      uMeta.className = "chat-meta";
+      uMeta.innerHTML = `
+        <span class="chat-time">${timeStr}</span>
+        <span class="chat-sender-name">Reviewer</span>
+        <div class="chat-avatar user"><span class="material-symbols-outlined">person</span></div>
+      `;
+      uMsg.appendChild(uMeta);
+
+      const uBubble = document.createElement("div");
+      uBubble.className = "chat-bubble";
+      uBubble.textContent = msg;
+      uMsg.appendChild(uBubble);
+      chatLog.appendChild(uMsg);
+
+      // Typing Indicator
+      const typingElem = document.createElement("div");
+      typingElem.id = "chat-typing";
+      typingElem.className = "chat-msg agent";
+      typingElem.innerHTML = `
+        <div class="chat-meta">
+          <div class="chat-avatar agent"><span class="material-symbols-outlined">fact_check</span></div>
+          <span class="chat-sender-name">ClaimLens AI</span>
+          <span class="chat-time">auditing evidence...</span>
+        </div>
+        <div class="typing-indicator">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      `;
+      chatLog.appendChild(typingElem);
+      chatLog.scrollTop = chatLog.scrollHeight;
+
+      // Maintain multi-turn session ID across queries
+      let sessionId = sessionStorage.getItem("claimlens_chat_session");
+
+      try {
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: msg,
+            user_id: "dashboard-user",
+            session_id: sessionId || undefined,
+          }),
+        });
+        const data = await res.json();
+
+        if (typingElem.parentNode) {
+          typingElem.parentNode.removeChild(typingElem);
+        }
+
+        if (data.session_id) {
+          sessionStorage.setItem("claimlens_chat_session", data.session_id);
+        }
+
+        const aMsg = document.createElement("div");
+        aMsg.className = "chat-msg agent";
+
+        const respTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        const aMeta = document.createElement("div");
+        aMeta.className = "chat-meta";
+        aMeta.innerHTML = `
+          <div class="chat-avatar agent"><span class="material-symbols-outlined">fact_check</span></div>
+          <span class="chat-sender-name">ClaimLens AI</span>
+          <span class="chat-role-badge">Audit Assistant</span>
+          <span class="chat-time">${respTime}</span>
+        `;
+        aMsg.appendChild(aMeta);
+
+        const bubble = document.createElement("div");
+        bubble.className = "chat-bubble";
+        aMsg.appendChild(bubble);
+
+        if (data.status === "error") {
+          bubble.style.borderLeft = "4px solid #ef4444";
+          bubble.style.background = "#fef2f2";
+        }
+
+        (data.parts || []).forEach(p => {
+          if (p.kind === "text") {
+            const d = document.createElement("div");
+            d.innerHTML = formatAgentText(p.text);
+            bubble.appendChild(d);
+          } else if (p.kind === "a2ui") {
+            const cardNote = document.createElement("div");
+            cardNote.style.cssText = "margin-top:8px;padding:8px 10px;border-radius:8px;background:#f8fafc;border:1px solid var(--border);border-left:3px solid var(--accent);font-size:0.75rem;";
+            cardNote.innerHTML = `
+              <div style="font-weight:600;color:var(--accent);display:flex;align-items:center;gap:4px;margin-bottom:2px;">
+                <span class="material-symbols-outlined" style="font-size:14px;">view_quilt</span>
+                A2UI Structured Evidence Card
+              </div>
+              <div style="color:var(--text-muted);font-size:0.72rem;">Verified policy calculation card emitted for dashboard.</div>
+            `;
+            bubble.appendChild(cardNote);
+          }
+        });
+        chatLog.appendChild(aMsg);
+        chatLog.scrollTop = chatLog.scrollHeight;
+      } catch (err) {
+        console.error("Chat error:", err);
+        if (typingElem.parentNode) {
+          typingElem.parentNode.removeChild(typingElem);
+        }
+        const errBubble = document.createElement("div");
+        errBubble.className = "chat-msg agent";
+        errBubble.innerHTML = `
+          <div class="chat-meta">
+            <div class="chat-avatar agent"><span class="material-symbols-outlined">warning</span></div>
+            <span class="chat-sender-name">ClaimLens AI</span>
+            <span class="chat-time">Notice</span>
+          </div>
+          <div class="chat-bubble" style="background:#fee2e2; color:#991b1b; border-color:#fca5a5;">
+            Connection error: Failed to reach backend service.
+          </div>
+        `;
+        chatLog.appendChild(errBubble);
+        chatLog.scrollTop = chatLog.scrollHeight;
+      }
+    }
+
+    async function init() {
+      try {
+        const res = await fetch("/api/fixtures");
+        cachedFixtures = await res.json();
+      } catch (e) {
+        console.warn("Could not load fixtures:", e);
+      }
+      loadRecentAudits();
+      checkChatBackendStatus();
+    }
+  </script>
+</body>
+</html>
